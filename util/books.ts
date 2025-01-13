@@ -80,6 +80,15 @@ const Livros = [
         estado: 'Usado',
         estoque: 1
     },
+    {
+        nome: 'Do mil ao milhão', 
+        autor: 'Thiagro Nigro',
+        preco: 30,
+        precoOff: 40,
+        img: './imgs/doMilAoMilhao.jpg',
+        estado: 'Usado',
+        estoque: 1
+    },
 ]
 
 export default Livros;
