@@ -1,0 +1,69 @@
+.home {
+  min-height: 100vh;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  background-color: rgb(98, 98, 98);
+}
+.eachItem {
+  height: 440px;
+  width: 220px;
+  background-color: white;
+  box-shadow: 1px 1px 10px black;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 5px;
+  text-align: center;
+  margin: 10px;
+}
+.eachBookImg {
+  height: 300px;
+  width: 200px;
+  margin: 4px;
+}
+.title {
+  font-weight: bold;
+  font-size: 15px;
+}
+.autor {
+  font-size: 12px;
+}
+.zapButton {
+  width: 80%;
+  height: 25px;
+  background-color: rgb(62, 183, 10);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-weight: bold;
+  margin: 4px;
+  border-radius: 2px;
+  cursor: pointer;
+}
+.zapImg {
+  height: 80%;
+}
+.precoArea {
+  display: flex ;
+  justify-content: center;
+  align-items: center;
+}
+.preco {
+  font-weight: bold;
+  margin: 5px;
+}
+.precoOff {
+  text-decoration: line-through;
+}
+.estado {
+  width: 50%;
+  height: 20px;
+}
