@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Versículos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            text-align: center;
+        }
+
+        .container {
+            margin: 20px;
+        }
+
+        form {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        form input, form textarea, form button, form select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        form button {
+            background-color: #4CAF50;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        form button:hover {
+            background-color: #45a049;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        ul li {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .actions button {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .actions button.edit {
+            background-color: #2196F3;
+            margin-right: 5px;
+        }
+
+        .actions button:hover {
+            opacity: 0.8;
+        }
+
+        .filter {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .filter select {
+            width: 100%;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Lista de Versículos</h1>
+    </header>
+    <div class="container">
+        <form id="verseForm">
+            <label for="verseText">Versículo</label>
+            <textarea id="verseText" rows="3" placeholder="Digite o versículo" required></textarea>
+            
+            <label for="book">Livro</label>
+            <input type="text" id="book" placeholder="Digite o livro" required>
+            
+            <label for="chapter">Capítulo e Versículo</label>
+            <input type="text" id="chapter" placeholder="Digite o capítulo" required>
+            
+            <label for="about">Sobre</label>
+            <textarea id="about" rows="2" placeholder="Sobre o que o versículo fala" required></textarea>
+            
+            <button type="submit">Adicionar Versículo</button>
+        </form>
+
+        <div class="filter">
+            <label for="filterAbout">Filtrar por Tema</label>
+            <select id="filterAbout">
+                <option value="all">Todos os temas</option>
+            </select>
+        </div>
+
+        <ul id="verseList"></ul>
+    </div>
+
+    <script>
+        const verseForm = document.getElementById('verseForm');
+        const verseList = document.getElementById('verseList');
+        const filterAbout = document.getElementById('filterAbout');
+        let verses = JSON.parse(localStorage.getItem('verses')) || [];
+
+        function saveToLocalStorage() {
+            localStorage.setItem('verses', JSON.stringify(verses));
+        }
+
+        function updateFilterOptions() {
+            const themes = Array.from(new Set(verses.map(verse => verse.about)));
+            filterAbout.innerHTML = <option value="all">Todos os temas</option>;
+            themes.forEach(theme => {
+                const option = document.createElement('option');
+                option.value = theme;
+                option.textContent = theme;
+                filterAbout.appendChild(option);
+            });
+        }
+
+        function renderVerses(filter = "all") {
+            verseList.innerHTML = '';
+            const filteredVerses = filter === "all" ? verses : verses.filter(verse => verse.about === filter);
+            filteredVerses
+                .slice()
+                .reverse()
+                .forEach((verse, index) => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <div>
+                            <strong>${verse.book}: ${verse.chapter}</strong>: ${verse.text}
+                            <p><em>Sobre: ${verse.about}</em></p>
+                        </div>
+                        <div class="actions">
+                            <button class="edit" onclick="editVerse(${verses.length - 1 - index})">Editar</button>
+                            <button onclick="deleteVerse(${verses.length - 1 - index})">Deletar</button>
+                        </div>
+                    `;
+                    verseList.appendChild(li);
+                });
+        }
+
+        function addVerse(e) {
+            e.preventDefault();
+            const verseText = document.getElementById('verseText').value;
+            const book = document.getElementById('book').value;
+            const chapter = document.getElementById('chapter').value;
+            const about = document.getElementById('about').value;
+
+            verses.push({ text: verseText, book, chapter, about });
+            saveToLocalStorage();
+            updateFilterOptions();
+            renderVerses();
+            verseForm.reset();
+        }
+
+        function deleteVerse(index) {
+            verses.splice(index, 1);
+            saveToLocalStorage();
+            updateFilterOptions();
+            renderVerses(filterAbout.value);
+        }
+
+        function editVerse(index) {
+            const verse = verses[index];
+            document.getElementById('verseText').value = verse.text;
+            document.getElementById('book').value = verse.book;
+            document.getElementById('chapter').value = verse.chapter;
+            document.getElementById('about').value = verse.about;
+
+            verses.splice(index, 1);
+            saveToLocalStorage();
+            updateFilterOptions();
+            renderVerses(filterAbout.value);
+        }
+
+        filterAbout.addEventListener('change', () => {
+            renderVerses(filterAbout.value);
+        });
+
+        verseForm.addEventListener('submit', addVerse);
+        updateFilterOptions();
+        renderVerses();
+    </script>
+</body>
+</html>
